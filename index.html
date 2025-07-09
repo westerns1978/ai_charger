@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Charger | Empower Your Small Business with AI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- JS Libraries for PDF and ZIP generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <style>
+        /* Custom Styles & Animations */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, #FFFFFF 70%, #FFF5F5 90%, #FF6B6B 100%); /* Mostly White, soft fade to Red at bottom */
+        }
+        /* Animation for sections sliding in */
+        @keyframes slide-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-slide-in-up {
+            animation: slide-in-up 0.7s ease-out forwards;
+        }
+        /* Hide scrollbar for chat */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .gemini-btn::before {
+            content: '✨';
+            margin-right: 0.5rem;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- API Key Input Section -->
+    <div id="api-key-section" class="bg-yellow-100 p-4 text-center sticky top-0 z-50 shadow-md">
+        <label for="api-key-input" class="font-bold mr-2">Enter Gemini API Key:</label>
+        <input type="password" id="api-key-input" class="p-2 border border-gray-400 rounded-lg" placeholder="Paste your key to activate AI">
+        <button id="save-api-key" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg ml-2">Save Key</button>
+        <p class="text-xs text-gray-600 mt-1">Your key is saved in your browser only and is required to power the AI features.</p>
+    </div>
+
+    <!-- Header & Hero Section -->
+    <header id="hero-section" class="hero-gradient text-black">
+        <div class="container mx-auto px-6 py-12 md:py-16">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- Left Column: Text -->
+                <div class="text-center md:text-left">
+                    <div class="flex justify-center md:justify-start items-center mb-6">
+                        <svg class="w-12 h-12 mr-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">AI Charger</h1>
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">Empower your Small Business with AI!</h2>
+                    <p class="text-lg md:text-xl max-w-xl mx-auto md:mx-0 mb-8 font-medium">Accelerate your growth with free, custom-built AI tools. Go from zero to launch in minutes.</p>
+                    <a href="#input-section" class="bg-red-600 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-red-700 transition duration-300 shadow-lg inline-block">Get Started for Free</a>
+                </div>
+                <!-- Right Column: Hero Image -->
+                <div class="hidden md:flex justify-center">
+                    <img src="https://i.imgur.com/Mgvn6Bm.png" alt="AI Business Guide Mascot" class="max-w-md w-full h-auto rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <!-- Input Section -->
+        <section id="input-section" class="scroll-mt-20 bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
+            <div class="text-center">
+                <h3 class="text-3xl font-bold mb-2">1. Tell Us About Your Business</h3>
+                <p class="text-gray-600 mb-8">Provide some details so our AI can tailor its recommendations just for you.</p>
+            </div>
+            <form id="business-form">
+                <div class="mb-6">
+                    <label for="businessName" class="font-bold mb-2 block">Business Name</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="businessName" placeholder="e.g., Jenny's Clean Sweep" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                        <button type="button" id="name-generator-btn" class="gemini-btn text-sm text-red-600 font-semibold whitespace-nowrap">Need a name idea?</button>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <input type="text" id="industry" placeholder="Industry (e.g., Home Services)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                    <input type="text" id="goals" placeholder="Main Goal (e.g., get more customers)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="font-bold mb-2 block">What are your biggest challenges?</label>
+                    <div class="relative">
+                        <textarea id="challenges" rows="4" placeholder="Type here, paste content, or use the buttons below..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"></textarea>
+                        <div class="absolute bottom-3 right-3 flex space-x-2">
+                             <button type="button" id="dictate-btn" class="p-2 bg-gray-200 rounded-full hover:bg-red-100" aria-label="Talk to AI">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a5 5 0 00-10 0v4a5 5 0 007 4.472z" clip-rule="evenodd" /></svg>
+                            </button>
+                             <label for="doc-upload" class="p-2 bg-gray-200 rounded-full hover:bg-red-100 cursor-pointer" aria-label="Upload Document">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                             </label>
+                             <input type="file" id="doc-upload" class="hidden" accept=".pdf,.docx,.txt">
+                        </div>
+                    </div>
+                    <p id="upload-status" class="text-sm text-gray-500 mt-2"></p>
+                </div>
+                
+                <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 flex items-center justify-center shadow-md">
+                    Analyze My Business
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </button>
+            </form>
+        </section>
+        
+        <!-- Video Showcase Section -->
+        <section id="video-showcase" class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">See AI Charger in Action</h3>
+                <p class="text-lg text-gray-600 mt-2">Watch how our AI guide can help you visualize success.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <video src="https://i.imgur.com/4fE0P7e.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/Fk8aL9k.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/w1sUjJ6.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/qE4J3yL.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+            </div>
+        </section>
+
+        <!-- AI Interaction Section -->
+        <section id="interaction-section" class="hidden bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto mt-16">
+            <h3 class="text-2xl font-bold text-center mb-2">2. ✨ AI Follow-Up</h3>
+            <p class="text-center text-gray-600 mb-8">Our AI has some questions to create the perfect growth plan.</p>
+            <div id="chat-container" class="h-64 overflow-y-auto border border-gray-200 rounded-lg p-4 space-y-4 no-scrollbar">
+                <!-- Chat messages will be appended here -->
+            </div>
+            <div id="interaction-form-container" class="mt-4">
+                <!-- Dynamic form fields will be appended here -->
+            </div>
+             <button id="generate-btn" class="hidden w-full bg-red-500 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-red-600 transition duration-300 mt-6 shadow-md">
+                Build My AI Toolkit
+            </button>
+            <div id="interaction-loader" class="text-center py-4">
+                <p class="text-gray-600">✨ Charging up the AI...</p>
+            </div>
+        </section>
+
+        <!-- Output Section -->
+        <section id="output-section" class="hidden mt-16">
+             <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">3. Your Fully Charged AI Toolkit is Ready!</h3>
+                <p class="text-lg text-gray-600 mt-2">Here are the custom assets generated for your business.</p>
+            </div>
+            <div id="output-loader" class="text-center py-8">
+                <div class="flex justify-center mb-4"><div class="loader"></div></div>
+                <p class="text-gray-600 text-lg">✨ Assembling your high-voltage toolkit...</p>
+            </div>
+            <div id="output-grid" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Generated content previews will be appended here -->
+            </div>
+        </section>
+        
+        <!-- Image Gallery Section -->
+        <section id="gallery-section" class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">Your AI Guide</h3>
+                <p class="text-lg text-gray-600 mt-2">Friendly, intelligent, and ready to help.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="https://i.imgur.com/azA55p9.png" alt="AI Guide at a desk" class="rounded-lg shadow-lg w-full h-full object-cover">
+                <img src="https://i.imgur.com/PutX8gw.png" alt="AI Guide in action" class="rounded-lg shadow-lg w-full h-full object-cover">
+                <img src="https://i.imgur.com/f3YBM5C.png" alt="AI Guide analyzing charts" class="rounded-lg shadow-lg w-full h-full object-cover">
+            </div>
+        </section>
+
+        <!-- Premium Upsell & Download Section -->
+        <section id="premium-section" class="hidden mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">Take the Next Step</h3>
+                <p class="text-lg text-gray-600 mt-2">Your free toolkit is ready. Unlock even more power to grow your business.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Free Toolkit -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border-2 border-red-500">
+                    <h4 class="text-2xl font-bold mb-4">Free Toolkit</h4>
+                    <p class="text-gray-600 mb-6">Everything you've seen so far, packaged and ready to go.</p>
+                    <ul class="space-y-2 text-gray-700 mb-8">
+                        <li>✔️ First Week Action Plan</li>
+                        <li>✔️ AI-Generated Business Plan</li>
+                        <li>✔️ AI-Generated Report</li>
+                        <li>✔️ Custom Logo</li>
+                        <li>✔️ Marketing Assets</li>
+                    </ul>
+                    <button id="download-all-btn" class="w-full bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-md">
+                        Download Free Toolkit
+                    </button>
+                </div>
+                <!-- Advanced Toolkit -->
+                <div class="bg-gray-800 text-white p-8 rounded-2xl shadow-lg">
+                    <h4 class="text-2xl font-bold mb-4">Advanced Toolkit <span class="text-sm text-red-400">(Coming Soon)</span></h4>
+                    <p class="text-gray-300 mb-6">Supercharge your growth with deeper analysis and more assets.</p>
+                    <ul class="space-y-2 text-gray-200 mb-8">
+                        <li>✔️ Everything in Free Toolkit</li>
+                        <li>✔️ In-Depth Competitor Analysis</li>
+                        <li>✔️ A/B Tested Ad Copy</li>
+                        <li>✔️ Full Social Media Campaign</li>
+                        <li>✔️ AI-Generated Video Ad Script</li>
+                    </ul>
+                    <button class="w-full bg-red-500 font-bold py-3 px-8 rounded-lg text-lg cursor-not-allowed opacity-50">
+                        Unlock for $49
+                    </button>
+                </div>
+                <!-- Human Consultation -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h4 class="text-2xl font-bold mb-4">1-on-1 Consultation <span class="text-sm text-red-400">(Coming Soon)</span></h4>
+                    <p class="text-gray-600 mb-6">Work directly with a human marketing expert to implement your AI strategy.</p>
+                     <ul class="space-y-2 text-gray-700 mb-8">
+                        <li>✔️ 60-Minute Strategy Call</li>
+                        <li>✔️ Custom Implementation Plan</li>
+                        <li>✔️ Review of Your AI Toolkit</li>
+                        <li>✔️ Personalized Q&A Session</li>
+                    </ul>
+                    <button class="w-full bg-gray-300 font-bold py-3 px-8 rounded-lg text-lg cursor-not-allowed opacity-50">
+                        Book for $299
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-24">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Contact us: <a href="mailto:info@aicharger.biz" class="text-red-400 hover:underline">info@aicharger.biz</a></p>
+            <div class="flex justify-center space-x-6 my-4">
+                <a href="#" class="text-gray-400 hover:text-white">X</a>
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+            </div>
+            <p class="text-gray-500 text-sm">&copy; 2025 AI Charger. All Rights Reserved.</p>
+            <p class="text-gray-500 text-sm mt-2"><a href="#" class="hover:underline">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <!-- Modal for notifications -->
+    <div id="notification-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg text-center w-full">
+            <h4 id="notification-title" class="font-bold text-lg mb-2"></h4>
+            <div id="notification-content"></div>
+            <button id="notification-close-btn" class="mt-4 bg-red-500 text-white font-bold py-2 px-6 rounded-lg">Close</button>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DOM Element Selectors ---
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveApiKeyBtn = document.getElementById('save-api-key');
+    const businessForm = document.getElementById('business-form');
+    const nameGeneratorBtn = document.getElementById('name-generator-btn');
+    const interactionSection = document.getElementById('interaction-section');
+    const outputSection = document.getElementById('output-section');
+    const premiumSection = document.getElementById('premium-section');
+    const gallerySection = document.getElementById('gallery-section');
+    const interactionLoader = document.getElementById('interaction-loader');
+    const chatContainer = document.getElementById('chat-container');
+    const interactionFormContainer = document.getElementById('interaction-form-container');
+    const generateBtn = document.getElementById('generate-btn');
+    const outputGrid = document.getElementById('output-grid');
+    const outputLoader = document.getElementById('output-loader');
+    const downloadAllBtn = document.getElementById('download-all-btn');
+    const dictateBtn = document.getElementById('dictate-btn');
+    const docUpload = document.getElementById('doc-upload');
+    const uploadStatus = document.getElementById('upload-status');
+    const notificationModal = document.getElementById('notification-modal');
+    const notificationTitle = document.getElementById('notification-title');
+    const notificationContent = document.getElementById('notification-content');
+    const notificationCloseBtn = document.getElementById('notification-close-btn');
+
+    // --- State Management ---
+    let businessData = {};
+    let generatedAssets = {};
+    let userApiKey = localStorage.getItem('geminiApiKey') || '';
+
+    // --- API Key Handling ---
+    apiKeyInput.value = userApiKey;
+    saveApiKeyBtn.addEventListener('click', () => {
+        userApiKey = apiKeyInput.value;
+        localStorage.setItem('geminiApiKey', userApiKey);
+        showNotification('API Key Saved', '<p>Your key has been saved in your browser for this session.</p>');
+    });
+    
+    function getApiKey() {
+        if (!userApiKey) {
+            showNotification('API Key Required', '<p>Please enter your Gemini API key at the top of the page to activate the AI features.</p>');
+            return null;
+        }
+        return userApiKey;
+    }
+
+    // --- Notification Modal Logic ---
+    const showNotification = (title, content) => {
+        notificationTitle.textContent = title;
+        notificationContent.innerHTML = content;
+        notificationModal.classList.remove('hidden');
+    };
+    notificationCloseBtn.addEventListener('click', () => notificationModal.classList.add('hidden'));
+
+    // --- Web Speech API for Dictation ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        dictateBtn.addEventListener('click', () => {
+            recognition.start();
+            dictateBtn.classList.add('bg-red-400', 'animate-pulse');
+            showNotification('Listening...', '<p>Please start speaking.</p>');
+        });
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('challenges').value += transcript;
+        };
+
+        recognition.onerror = (event) => {
+            showNotification('Speech Recognition Error', `<p>${event.error}</p>`);
+        };
+
+        recognition.onend = () => {
+            dictateBtn.classList.remove('bg-red-400', 'animate-pulse');
+            notificationModal.classList.add('hidden');
+        };
+    } else {
+        dictateBtn.disabled = true;
+        dictateBtn.title = "Speech recognition not supported in your browser.";
+    }
+
+    // --- FileReader API for Document Upload ---
+    docUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            uploadStatus.textContent = `Reading ${file.name}...`;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('challenges').value += `\n\n--- Content from ${file.name} ---\n${e.target.result}`;
+                uploadStatus.textContent = `Successfully processed ${file.name}. Content added to challenges.`;
+            };
+            reader.onerror = () => {
+                uploadStatus.textContent = `Error reading ${file.name}.`;
+            };
+            reader.readAsText(file);
+        }
+    });
+    
+    // --- Form Submission & AI Interaction ---
+    businessForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!getApiKey()) return;
+        
+        businessData = {
+            name: document.getElementById('businessName').value,
+            industry: document.getElementById('industry').value,
+            goals: document.getElementById('goals').value,
+            challenges: document.getElementById('challenges').value,
+        };
+        
+        interactionSection.classList.remove('hidden');
+        interactionSection.scrollIntoView({ behavior: 'smooth' });
+
+        try {
+            const followUpQuestions = await analyzeBusinessNeeds(businessData);
+            interactionLoader.classList.add('hidden');
+            displayFollowUpQuestions(followUpQuestions);
+            generateBtn.classList.remove('hidden');
+        } catch (error) {
+            interactionLoader.innerHTML = `<p class="text-red-500">Error analyzing business: ${error.message}. Please try again.</p>`;
+        }
+    });
+
+    // --- Gemini API Call: Business Name Generator ---
+    nameGeneratorBtn.addEventListener('click', async () => {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+        
+        const industry = document.getElementById('industry').value;
+        const goals = document.getElementById('goals').value;
+        if (!industry || !goals) {
+            showNotification('Missing Info', '<p>Please fill in the "Industry" and "Main Goal" fields first to get name ideas.</p>');
+            return;
+        }
+
+        showNotification('Generating Names...', '<div class="flex justify-center"><div class="loader"></div></div>');
+
+        try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const prompt = `You are a creative branding expert. Based on the industry "${industry}" and the goal "${goals}", generate 5 catchy and professional business names. Return the names as a valid JSON object in this format: { "names": ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5"] }`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+            
+            const result = await response.json();
+            const jsonText = result.candidates[0].content.parts[0].text;
+            const names = JSON.parse(jsonText).names;
+
+            let nameButtons = names.map(name => `<button class="name-suggestion-btn w-full text-left p-2 hover:bg-red-100 rounded">${name}</button>`).join('');
+            showNotification('Here are some ideas:', `<div class="space-y-2">${nameButtons}</div>`);
+
+            document.querySelectorAll('.name-suggestion-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.getElementById('businessName').value = button.textContent;
+                    notificationModal.classList.add('hidden');
+                });
+            });
+
+        } catch (error) {
+            showNotification('Error', `<p>Could not generate names: ${error.message}</p>`);
+        }
+    });
+
+
+    // --- Gemini API Call: Analyze Needs & Generate Questions ---
+    async function analyzeBusinessNeeds(data) {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+        
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        
+        const prompt = `You are an expert business consultant AI. Analyze the following small business data:
+        - Name: "${data.name}"
+        - Industry: "${data.industry}"
+        - Goals: "${data.goals}"
+        - Challenges: "${data.challenges}"
+        
+        Based on this, generate exactly 3 concise, relevant follow-up questions to better understand their needs for marketing, operations, or growth.
+        Return the questions as a valid JSON object in this format: { "questions": [{ "id": "question1", "text": "Your question here?", "type": "text" or "select", "options": ["Option A", "Option B"] }] }. 
+        For 'select' type, provide 3-4 sensible options. For 'text' type, options should be an empty array.`;
+
+        const payload = {
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+        };
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        
+        const result = await response.json();
+        if (!result.candidates || !result.candidates[0].content.parts[0].text) {
+             throw new Error("Invalid response structure from API.");
+        }
+        const jsonText = result.candidates[0].content.parts[0].text;
+        return JSON.parse(jsonText).questions;
+    }
+
+    // --- Display Follow-Up Questions ---
+    function displayFollowUpQuestions(questions) {
+        addMessageToChat('AI Charger', 'Thanks! I have a few quick questions to help me generate the best tools for you.');
+        
+        questions.forEach(q => {
+            addMessageToChat('AI Charger', q.text);
+            let inputHtml = '';
+            if (q.type === 'select') {
+                const optionsHtml = q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                inputHtml = `<select id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500">${optionsHtml}</select>`;
+            } else {
+                inputHtml = `<input type="text" id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500" placeholder="Your answer...">`;
+            }
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'mb-4';
+            questionDiv.innerHTML = `<label for="followup-${q.id}" class="font-semibold text-gray-700">${q.text}</label>${inputHtml}`;
+            interactionFormContainer.appendChild(questionDiv);
+        });
+    }
+    
+    function addMessageToChat(sender, message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `p-3 rounded-lg max-w-xs ${sender === 'AI Charger' ? 'bg-red-100' : 'bg-gray-100 ml-auto'}`;
+        messageDiv.textContent = message;
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // --- Generate Outputs Button ---
+    generateBtn.addEventListener('click', async () => {
+        businessData.followUps = {};
+        const followUpInputs = interactionFormContainer.querySelectorAll('input, select');
+        followUpInputs.forEach(input => {
+            const id = input.id.replace('followup-', '');
+            businessData.followUps[id] = input.value;
+        });
+
+        outputSection.classList.remove('hidden');
+        outputSection.scrollIntoView({ behavior: 'smooth' });
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+
+        try {
+            generatedAssets = await generateAllOutputs(businessData);
+            outputLoader.classList.add('hidden');
+            outputGrid.classList.remove('hidden');
+            displayGeneratedOutputs(generatedAssets);
+            premiumSection.classList.remove('hidden');
+            gallerySection.classList.remove('hidden');
+        } catch (error) {
+            outputLoader.innerHTML = `<p class="text-red-500">Error generating assets: ${error.message}. Please try again.</p>`;
+        }
+    });
+
+    // --- Gemini API Call: Generate All Outputs ---
+    async function generateAllOutputs(data) {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+
+        const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+        const textGenPrompt = `You are an expert business and marketing AI. For the business detailed below, generate a JSON object with the following keys:
+        1. "actionPlan": An object with a "title" and a "tasks" array of 5 strings for a first-week action plan.
+        2. "businessPlan": An object with "executiveSummary", "productsServices", "targetMarket", and "marketingStrategy" sections.
+        3. "report": An object with "title", "introduction", a "growthPlan" array (each item having an "emoji", "title", "description"), and a "keyMetric" object ("title", "description").
+        4. "flyerHeadline": A catchy headline for a promotional flyer.
+        5. "posterBlurb": A short, persuasive blurb for a windshield poster.
+        6. "logoPrompt": A detailed, hyperrealistic image generation prompt for a professional logo.
+        7. "scenarioImagePrompt": A prompt for a hyperrealistic image visualizing a success scenario for the business.
+        
+        Business Data: ${JSON.stringify(data)}`;
+
+        const textPayload = {
+            contents: [{ role: "user", parts: [{ text: textGenPrompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+        };
+
+        const textResponse = await fetch(textApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(textPayload)
+        });
+        if (!textResponse.ok) throw new Error(`Text API error: ${textResponse.statusText}`);
+        const textResult = await textResponse.json();
+        const generatedText = JSON.parse(textResult.candidates[0].content.parts[0].text);
+
+        const [logoResponse, scenarioResponse] = await Promise.all([
+            fetch(imageApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ instances: [{ prompt: generatedText.logoPrompt }], parameters: { "sampleCount": 1 } })
+            }),
+            fetch(imageApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ instances: [{ prompt: generatedText.scenarioImagePrompt }], parameters: { "sampleCount": 1 } })
+            })
+        ]);
+
+        if (!logoResponse.ok) throw new Error(`Logo API error: ${logoResponse.statusText}`);
+        if (!scenarioResponse.ok) throw new Error(`Scenario Image API error: ${scenarioResponse.statusText}`);
+        
+        const logoResult = await logoResponse.json();
+        const scenarioResult = await scenarioResponse.json();
+
+        const logoImageUrl = `data:image/png;base64,${logoResult.predictions[0].bytesBase64Encoded}`;
+        const scenarioImageUrl = `data:image/png;base64,${scenarioResult.predictions[0].bytesBase64Encoded}`;
+
+        const businessName = data.name || "Your Business";
+        const website = data.followUps.hasWebsite || 'aicharger.biz';
+        return {
+            actionPlan: { title: "✨ First Week Action Plan", ...generatedText.actionPlan },
+            businessPlan: { title: "✨ AI-Generated Business Plan", ...generatedText.businessPlan },
+            report: { title: `✨ AI Growth Report for ${businessName}`, ...generatedText.report, imageUrl: scenarioImageUrl },
+            logo: { title: "✨ AI-Generated Logo", imageUrl: logoImageUrl },
+            flyer: { title: "Promotional Flyer", businessName, headline: generatedText.flyerHeadline, phone: "555-1234" },
+            poster: { title: "Windshield Poster", businessName, blurb: generatedText.posterBlurb, callToAction: "Call Now!" },
+            qrCode: { title: "QR Code", url: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(website)}` }
+        };
+    }
+
+    // --- Display Generated Outputs ---
+    function displayGeneratedOutputs(assets) {
+        outputGrid.innerHTML = '';
+        
+        const cardData = {
+            actionPlan: { title: assets.actionPlan.title, content: assets.actionPlan.tasks.map(t => `✔️ ${t}`).join('\n') },
+            businessPlan: { title: assets.businessPlan.title, content: `**Executive Summary:** ${assets.businessPlan.executiveSummary.substring(0, 100)}...` },
+            report: { title: assets.report.title, content: `${assets.report.introduction.substring(0, 100)}...` },
+            logo: { title: assets.logo.title, content: `<div class="flex justify-center items-center h-48 bg-gray-100 rounded-lg"><div class="loader"></div></div>` },
+            flyer: { title: assets.flyer.title, content: `<p class="text-center font-bold">"${assets.flyer.headline}"</p><p class="text-center mt-2">A4 flyer with 8 pull-tabs.</p><div class="text-4xl text-center mt-4">📄</div>` },
+            poster: { title: assets.poster.title, content: `<p class="text-center font-bold">"${assets.poster.blurb}"</p><p class="text-center mt-2">Bold windshield poster.</p><div class="text-4xl text-center mt-4">🚗</div>` }
+        };
+
+        Object.keys(cardData).forEach(key => {
+            const card = document.createElement('div');
+            card.innerHTML = createCard(cardData[key].title, cardData[key].content);
+            outputGrid.appendChild(card);
+            
+            if (key === 'logo') {
+                const img = new Image();
+                img.src = assets.logo.imageUrl;
+                img.onload = () => {
+                    card.querySelector('.loader').parentElement.innerHTML = `<img src="${assets.logo.imageUrl}" alt="AI Generated Logo" class="rounded-lg max-h-full w-auto mx-auto">`;
+                };
+            }
+        });
+    }
+
+    function createCard(title, content) {
+        return `
+            <div class="bg-white p-6 rounded-xl shadow-md flex flex-col h-full">
+                <h4 class="font-bold text-lg mb-3">${title}</h4>
+                <div class="text-gray-600 flex-grow text-sm whitespace-pre-wrap">${content.replace(/\*\*/g, '<strong>')}</div>
+            </div>
+        `;
+    }
+    
+    // --- Download All Assets as ZIP ---
+    async function imageToDataUrl(url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    downloadAllBtn.addEventListener('click', async () => {
+        showNotification('Zipping files...', '<p>Please wait while we package your assets.</p>');
+        const zip = new JSZip();
+        const { jsPDF } = window.jspdf;
+
+        const reportPdf = await generateReportPDF(jsPDF, generatedAssets.report);
+        zip.file("AI_Growth_Report.pdf", reportPdf.output('blob'));
+
+        const businessPlanPdf = generateBusinessPlanPDF(jsPDF, generatedAssets.businessPlan, businessData.name);
+        zip.file("AI_Business_Plan.pdf", businessPlanPdf.output('blob'));
+
+        const actionPlanPdf = generateActionPlanPDF(jsPDF, generatedAssets.actionPlan, businessData.name);
+        zip.file("First_Week_Action_Plan.pdf", actionPlanPdf.output('blob'));
+
+        const logoResponse = await fetch(generatedAssets.logo.imageUrl);
+        zip.file("logo.png", await logoResponse.blob());
+
+        const qrResponse = await fetch(generatedAssets.qrCode.url);
+        zip.file("qr_code.png", await qrResponse.blob());
+
+        const flyerPdf = generateFlyerPDF(jsPDF, generatedAssets.flyer);
+        zip.file("flyer_with_pulltabs.pdf", flyerPdf.output('blob'));
+
+        const posterPdf = generatePosterPDF(jsPDF, generatedAssets.poster);
+        zip.file("windshield_poster.pdf", posterPdf.output('blob'));
+
+        zip.generateAsync({ type: "blob" }).then(content => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
+            link.download = `${businessData.name.replace(/\s+/g, '_')}_AI_Toolkit.zip`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            notificationModal.classList.add('hidden');
+        });
+    });
+
+    async function generateReportPDF(PDF, data) {
+        const doc = new PDF();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        let y = 20;
+
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.title, pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        const introLines = doc.splitTextToSize(data.introduction, 170);
+        doc.text(introLines, 20, y);
+        y += introLines.length * 5 + 10;
+
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Your AI Growth Plan:", 20, y);
+        y += 10;
+
+        data.growthPlan.forEach(plan => {
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            const titleLines = doc.splitTextToSize(`${plan.emoji} ${plan.title}`, 160);
+            doc.text(titleLines, 25, y);
+            y += titleLines.length * 5;
+
+            doc.setFont("helvetica", "normal");
+            const descLines = doc.splitTextToSize(plan.description, 160);
+            doc.text(descLines, 25, y);
+            y += descLines.length * 5 + 5;
+            if (y > pageHeight - 30) { doc.addPage(); y = 20; }
+        });
+        
+        y += 5;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.keyMetric.title, 20, y);
+        y += 7;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        const metricLines = doc.splitTextToSize(data.keyMetric.description, 170);
+        doc.text(metricLines, 20, y);
+        y += metricLines.length * 5 + 10;
+        
+        if (y > pageHeight - 80) { doc.addPage(); y = 20; }
+
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("Visualizing Your Success:", 20, y);
+        y += 10;
+        
+        try {
+            const imageDataUrl = await imageToDataUrl(data.imageUrl);
+            doc.addImage(imageDataUrl, 'PNG', 20, y, 170, 0);
+        } catch (e) {
+            doc.text("Could not load scenario image.", 20, y);
+        }
+
+        return doc;
+    }
+
+    function generateBusinessPlanPDF(PDF, data, businessName) {
+        const doc = new PDF();
+        let y = 20;
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text(`One-Page Business Plan for ${businessName}`, pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        const addSection = (title, content) => {
+            if (y > pageHeight - 40) { doc.addPage(); y = 20; }
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.text(title, 20, y);
+            y += 8;
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            const lines = doc.splitTextToSize(content, 170);
+            doc.text(lines, 20, y);
+            y += lines.length * 5 + 10;
+        };
+
+        addSection("Executive Summary", data.executiveSummary);
+        addSection("Products / Services", data.productsServices);
+        addSection("Target Market", data.targetMarket);
+        addSection("Marketing & Sales Strategy", data.marketingStrategy);
+        
+        return doc;
+    }
+    
+    function generateActionPlanPDF(PDF, data, businessName) {
+        const doc = new PDF();
+        let y = 20;
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text(`First Week Action Plan for ${businessName}`, pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        data.tasks.forEach((task, index) => {
+            if (y > pageHeight - 20) { doc.addPage(); y = 20; }
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.text(`[  ] Day ${index + 1}: ${task}`, 20, y);
+            y += 10;
+        });
+        
+        return doc;
+    }
+
+    function generateFlyerPDF(PDF, data) {
+        const doc = new PDF();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        
+        doc.setFontSize(30);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.headline, pageWidth / 2, 40, { align: 'center', maxWidth: 180 });
+        
+        doc.setFontSize(22);
+        doc.text(data.businessName, pageWidth / 2, 60, { align: 'center' });
+        
+        const tabWidth = (pageWidth - 20) / 8;
+        const tabStartY = pageHeight - 50;
+        doc.line(10, tabStartY, pageWidth - 10, tabStartY);
+
+        for (let i = 0; i < 8; i++) {
+            const x = 10 + i * tabWidth;
+            doc.line(x, tabStartY, x, pageHeight - 10);
+            doc.setFontSize(8);
+            doc.text(data.businessName, x + 2, tabStartY + 10, { angle: 90 });
+            doc.setFontSize(10);
+            doc.text(data.phone, x + 8, tabStartY + 25, { angle: 90 });
+        }
+        return doc;
+    }
+
+    function generatePosterPDF(PDF, data) {
+        const doc = new PDF({orientation: 'landscape'});
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        
+        doc.setFontSize(50);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.businessName.toUpperCase(), pageWidth / 2, pageHeight / 2 - 30, { align: 'center' });
+        
+        doc.setFontSize(30);
+        doc.setFont("helvetica", "normal");
+        doc.text(data.blurb, pageWidth / 2, pageHeight / 2, { align: 'center', maxWidth: 260 });
+
+        doc.setFontSize(40);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.callToAction, pageWidth / 2, pageHeight / 2 + 40, { align: 'center' });
+        
+        return doc;
+    }
+});
+
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Charger | Empower Your Small Business with AI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- JS Libraries for PDF and ZIP generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <style>
+        /* Custom Styles & Animations */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, #FFFFFF 70%, #FFF5F5 90%, #FF6B6B 100%); /* Mostly White, soft fade to Red at bottom */
+        }
+        /* Animation for sections sliding in */
+        @keyframes slide-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-slide-in-up {
+            animation: slide-in-up 0.7s ease-out forwards;
+        }
+        /* Hide scrollbar for chat */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .gemini-btn::before {
+            content: '✨';
+            margin-right: 0.5rem;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- API Key Input Section -->
+    <div id="api-key-section" class="bg-yellow-100 p-4 text-center sticky top-0 z-50 shadow-md">
+        <label for="api-key-input" class="font-bold mr-2">Enter Gemini API Key:</label>
+        <input type="password" id="api-key-input" class="p-2 border border-gray-400 rounded-lg" placeholder="Paste your key to activate AI">
+        <button id="save-api-key" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg ml-2">Save Key</button>
+        <p class="text-xs text-gray-600 mt-1">Your key is saved in your browser only and is required to power the AI features.</p>
+    </div>
+
+    <!-- Header & Hero Section -->
+    <header id="hero-section" class="hero-gradient text-black">
+        <div class="container mx-auto px-6 py-12 md:py-16">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- Left Column: Text -->
+                <div class="text-center md:text-left">
+                    <div class="flex justify-center md:justify-start items-center mb-6">
+                        <svg class="w-12 h-12 mr-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">AI Charger</h1>
+                    </div>
+                    <h2 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">Empower your Small Business with AI!</h2>
+                    <p class="text-lg md:text-xl max-w-xl mx-auto md:mx-0 mb-8 font-medium">Accelerate your growth with free, custom-built AI tools. Go from zero to launch in minutes.</p>
+                    <a href="#input-section" class="bg-red-600 text-white font-bold py-3 px-8 rounded-full text-lg hover:bg-red-700 transition duration-300 shadow-lg inline-block">Get Started for Free</a>
+                </div>
+                <!-- Right Column: Hero Image -->
+                <div class="hidden md:flex justify-center">
+                    <img src="https://i.imgur.com/Mgvn6Bm.png" alt="AI Business Guide Mascot" class="max-w-md w-full h-auto rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <!-- Input Section -->
+        <section id="input-section" class="scroll-mt-20 bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
+            <div class="text-center">
+                <h3 class="text-3xl font-bold mb-2">1. Tell Us About Your Business</h3>
+                <p class="text-gray-600 mb-8">Provide some details so our AI can tailor its recommendations just for you.</p>
+            </div>
+            <form id="business-form">
+                <div class="mb-6">
+                    <label for="businessName" class="font-bold mb-2 block">Business Name</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="businessName" placeholder="e.g., Jenny's Clean Sweep" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                        <button type="button" id="name-generator-btn" class="gemini-btn text-sm text-red-600 font-semibold whitespace-nowrap">Need a name idea?</button>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <input type="text" id="industry" placeholder="Industry (e.g., Home Services)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                    <input type="text" id="goals" placeholder="Main Goal (e.g., get more customers)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="font-bold mb-2 block">What are your biggest challenges?</label>
+                    <div class="relative">
+                        <textarea id="challenges" rows="4" placeholder="Type here, paste content, or use the buttons below..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"></textarea>
+                        <div class="absolute bottom-3 right-3 flex space-x-2">
+                             <button type="button" id="dictate-btn" class="p-2 bg-gray-200 rounded-full hover:bg-red-100" aria-label="Talk to AI">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a5 5 0 00-10 0v4a5 5 0 007 4.472z" clip-rule="evenodd" /></svg>
+                            </button>
+                             <label for="doc-upload" class="p-2 bg-gray-200 rounded-full hover:bg-red-100 cursor-pointer" aria-label="Upload Document">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                             </label>
+                             <input type="file" id="doc-upload" class="hidden" accept=".pdf,.docx,.txt">
+                        </div>
+                    </div>
+                    <p id="upload-status" class="text-sm text-gray-500 mt-2"></p>
+                </div>
+                
+                <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 flex items-center justify-center shadow-md">
+                    Analyze My Business
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </button>
+            </form>
+        </section>
+        
+        <!-- Video Showcase Section -->
+        <section id="video-showcase" class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">See AI Charger in Action</h3>
+                <p class="text-lg text-gray-600 mt-2">Watch how our AI guide can help you visualize success.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <video src="https://i.imgur.com/4fE0P7e.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/Fk8aL9k.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/w1sUjJ6.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/qE4J3yL.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+            </div>
+        </section>
+
+        <!-- AI Interaction Section -->
+        <section id="interaction-section" class="hidden bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto mt-16">
+            <h3 class="text-2xl font-bold text-center mb-2">2. ✨ AI Follow-Up</h3>
+            <p class="text-center text-gray-600 mb-8">Our AI has some questions to create the perfect growth plan.</p>
+            <div id="chat-container" class="h-64 overflow-y-auto border border-gray-200 rounded-lg p-4 space-y-4 no-scrollbar">
+                <!-- Chat messages will be appended here -->
+            </div>
+            <div id="interaction-form-container" class="mt-4">
+                <!-- Dynamic form fields will be appended here -->
+            </div>
+             <button id="generate-btn" class="hidden w-full bg-red-500 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-red-600 transition duration-300 mt-6 shadow-md">
+                Build My AI Toolkit
+            </button>
+            <div id="interaction-loader" class="text-center py-4">
+                <p class="text-gray-600">✨ Charging up the AI...</p>
+            </div>
+        </section>
+
+        <!-- Output Section -->
+        <section id="output-section" class="hidden mt-16">
+             <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">3. Your Fully Charged AI Toolkit is Ready!</h3>
+                <p class="text-lg text-gray-600 mt-2">Here are the custom assets generated for your business.</p>
+            </div>
+            <div id="output-loader" class="text-center py-8">
+                <div class="flex justify-center mb-4"><div class="loader"></div></div>
+                <p class="text-gray-600 text-lg">✨ Assembling your high-voltage toolkit...</p>
+            </div>
+            <div id="output-grid" class="hidden grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Generated content previews will be appended here -->
+            </div>
+        </section>
+        
+        <!-- Image Gallery Section -->
+        <section id="gallery-section" class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">Your AI Guide</h3>
+                <p class="text-lg text-gray-600 mt-2">Friendly, intelligent, and ready to help.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="https://i.imgur.com/azA55p9.png" alt="AI Guide at a desk" class="rounded-lg shadow-lg w-full h-full object-cover">
+                <img src="https://i.imgur.com/PutX8gw.png" alt="AI Guide in action" class="rounded-lg shadow-lg w-full h-full object-cover">
+                <img src="https://i.imgur.com/f3YBM5C.png" alt="AI Guide analyzing charts" class="rounded-lg shadow-lg w-full h-full object-cover">
+            </div>
+        </section>
+
+        <!-- Premium Upsell & Download Section -->
+        <section id="premium-section" class="hidden mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">Take the Next Step</h3>
+                <p class="text-lg text-gray-600 mt-2">Your free toolkit is ready. Unlock even more power to grow your business.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Free Toolkit -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border-2 border-red-500">
+                    <h4 class="text-2xl font-bold mb-4">Free Toolkit</h4>
+                    <p class="text-gray-600 mb-6">Everything you've seen so far, packaged and ready to go.</p>
+                    <ul class="space-y-2 text-gray-700 mb-8">
+                        <li>✔️ First Week Action Plan</li>
+                        <li>✔️ AI-Generated Business Plan</li>
+                        <li>✔️ AI-Generated Report</li>
+                        <li>✔️ Custom Logo</li>
+                        <li>✔️ Marketing Assets</li>
+                    </ul>
+                    <button id="download-all-btn" class="w-full bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-md">
+                        Download Free Toolkit
+                    </button>
+                </div>
+                <!-- Advanced Toolkit -->
+                <div class="bg-gray-800 text-white p-8 rounded-2xl shadow-lg">
+                    <h4 class="text-2xl font-bold mb-4">Advanced Toolkit <span class="text-sm text-red-400">(Coming Soon)</span></h4>
+                    <p class="text-gray-300 mb-6">Supercharge your growth with deeper analysis and more assets.</p>
+                    <ul class="space-y-2 text-gray-200 mb-8">
+                        <li>✔️ Everything in Free Toolkit</li>
+                        <li>✔️ In-Depth Competitor Analysis</li>
+                        <li>✔️ A/B Tested Ad Copy</li>
+                        <li>✔️ Full Social Media Campaign</li>
+                        <li>✔️ AI-Generated Video Ad Script</li>
+                    </ul>
+                    <button class="w-full bg-red-500 font-bold py-3 px-8 rounded-lg text-lg cursor-not-allowed opacity-50">
+                        Unlock for $49
+                    </button>
+                </div>
+                <!-- Human Consultation -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg">
+                    <h4 class="text-2xl font-bold mb-4">1-on-1 Consultation <span class="text-sm text-red-400">(Coming Soon)</span></h4>
+                    <p class="text-gray-600 mb-6">Work directly with a human marketing expert to implement your AI strategy.</p>
+                     <ul class="space-y-2 text-gray-700 mb-8">
+                        <li>✔️ 60-Minute Strategy Call</li>
+                        <li>✔️ Custom Implementation Plan</li>
+                        <li>✔️ Review of Your AI Toolkit</li>
+                        <li>✔️ Personalized Q&A Session</li>
+                    </ul>
+                    <button class="w-full bg-gray-300 font-bold py-3 px-8 rounded-lg text-lg cursor-not-allowed opacity-50">
+                        Book for $299
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white mt-24">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Contact us: <a href="mailto:info@aicharger.biz" class="text-red-400 hover:underline">info@aicharger.biz</a></p>
+            <div class="flex justify-center space-x-6 my-4">
+                <a href="#" class="text-gray-400 hover:text-white">X</a>
+                <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+            </div>
+            <p class="text-gray-500 text-sm">&copy; 2025 AI Charger. All Rights Reserved.</p>
+            <p class="text-gray-500 text-sm mt-2"><a href="#" class="hover:underline">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <!-- Modal for notifications -->
+    <div id="notification-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg text-center w-full">
+            <h4 id="notification-title" class="font-bold text-lg mb-2"></h4>
+            <div id="notification-content"></div>
+            <button id="notification-close-btn" class="mt-4 bg-red-500 text-white font-bold py-2 px-6 rounded-lg">Close</button>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DOM Element Selectors ---
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveApiKeyBtn = document.getElementById('save-api-key');
+    const businessForm = document.getElementById('business-form');
+    const nameGeneratorBtn = document.getElementById('name-generator-btn');
+    const interactionSection = document.getElementById('interaction-section');
+    const outputSection = document.getElementById('output-section');
+    const premiumSection = document.getElementById('premium-section');
+    const gallerySection = document.getElementById('gallery-section');
+    const interactionLoader = document.getElementById('interaction-loader');
+    const chatContainer = document.getElementById('chat-container');
+    const interactionFormContainer = document.getElementById('interaction-form-container');
+    const generateBtn = document.getElementById('generate-btn');
+    const outputGrid = document.getElementById('output-grid');
+    const outputLoader = document.getElementById('output-loader');
+    const downloadAllBtn = document.getElementById('download-all-btn');
+    const dictateBtn = document.getElementById('dictate-btn');
+    const docUpload = document.getElementById('doc-upload');
+    const uploadStatus = document.getElementById('upload-status');
+    const notificationModal = document.getElementById('notification-modal');
+    const notificationTitle = document.getElementById('notification-title');
+    const notificationContent = document.getElementById('notification-content');
+    const notificationCloseBtn = document.getElementById('notification-close-btn');
+
+    // --- State Management ---
+    let businessData = {};
+    let generatedAssets = {};
+    let userApiKey = localStorage.getItem('geminiApiKey') || '';
+
+    // --- API Key Handling ---
+    apiKeyInput.value = userApiKey;
+    saveApiKeyBtn.addEventListener('click', () => {
+        userApiKey = apiKeyInput.value;
+        localStorage.setItem('geminiApiKey', userApiKey);
+        showNotification('API Key Saved', '<p>Your key has been saved in your browser for this session.</p>');
+    });
+    
+    function getApiKey() {
+        if (!userApiKey) {
+            showNotification('API Key Required', '<p>Please enter your Gemini API key at the top of the page to activate the AI features.</p>');
+            return null;
+        }
+        return userApiKey;
+    }
+
+    // --- Notification Modal Logic ---
+    const showNotification = (title, content) => {
+        notificationTitle.textContent = title;
+        notificationContent.innerHTML = content;
+        notificationModal.classList.remove('hidden');
+    };
+    notificationCloseBtn.addEventListener('click', () => notificationModal.classList.add('hidden'));
+
+    // --- Web Speech API for Dictation ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        dictateBtn.addEventListener('click', () => {
+            recognition.start();
+            dictateBtn.classList.add('bg-red-400', 'animate-pulse');
+            showNotification('Listening...', '<p>Please start speaking.</p>');
+        });
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('challenges').value += transcript;
+        };
+
+        recognition.onerror = (event) => {
+            showNotification('Speech Recognition Error', `<p>${event.error}</p>`);
+        };
+
+        recognition.onend = () => {
+            dictateBtn.classList.remove('bg-red-400', 'animate-pulse');
+            notificationModal.classList.add('hidden');
+        };
+    } else {
+        dictateBtn.disabled = true;
+        dictateBtn.title = "Speech recognition not supported in your browser.";
+    }
+
+    // --- FileReader API for Document Upload ---
+    docUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            uploadStatus.textContent = `Reading ${file.name}...`;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('challenges').value += `\n\n--- Content from ${file.name} ---\n${e.target.result}`;
+                uploadStatus.textContent = `Successfully processed ${file.name}. Content added to challenges.`;
+            };
+            reader.onerror = () => {
+                uploadStatus.textContent = `Error reading ${file.name}.`;
+            };
+            reader.readAsText(file);
+        }
+    });
+    
+    // --- Form Submission & AI Interaction ---
+    businessForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!getApiKey()) return;
+        
+        businessData = {
+            name: document.getElementById('businessName').value,
+            industry: document.getElementById('industry').value,
+            goals: document.getElementById('goals').value,
+            challenges: document.getElementById('challenges').value,
+        };
+        
+        interactionSection.classList.remove('hidden');
+        interactionSection.scrollIntoView({ behavior: 'smooth' });
+
+        try {
+            const followUpQuestions = await analyzeBusinessNeeds(businessData);
+            interactionLoader.classList.add('hidden');
+            displayFollowUpQuestions(followUpQuestions);
+            generateBtn.classList.remove('hidden');
+        } catch (error) {
+            interactionLoader.innerHTML = `<p class="text-red-500">Error analyzing business: ${error.message}. Please try again.</p>`;
+        }
+    });
+
+    // --- Gemini API Call: Business Name Generator ---
+    nameGeneratorBtn.addEventListener('click', async () => {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+        
+        const industry = document.getElementById('industry').value;
+        const goals = document.getElementById('goals').value;
+        if (!industry || !goals) {
+            showNotification('Missing Info', '<p>Please fill in the "Industry" and "Main Goal" fields first to get name ideas.</p>');
+            return;
+        }
+
+        showNotification('Generating Names...', '<div class="flex justify-center"><div class="loader"></div></div>');
+
+        try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const prompt = `You are a creative branding expert. Based on the industry "${industry}" and the goal "${goals}", generate 5 catchy and professional business names. Return the names as a valid JSON object in this format: { "names": ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5"] }`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+            
+            const result = await response.json();
+            const jsonText = result.candidates[0].content.parts[0].text;
+            const names = JSON.parse(jsonText).names;
+
+            let nameButtons = names.map(name => `<button class="name-suggestion-btn w-full text-left p-2 hover:bg-red-100 rounded">${name}</button>`).join('');
+            showNotification('Here are some ideas:', `<div class="space-y-2">${nameButtons}</div>`);
+
+            document.querySelectorAll('.name-suggestion-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.getElementById('businessName').value = button.textContent;
+                    notificationModal.classList.add('hidden');
+                });
+            });
+
+        } catch (error) {
+            showNotification('Error', `<p>Could not generate names: ${error.message}</p>`);
+        }
+    });
+
+
+    // --- Gemini API Call: Analyze Needs & Generate Questions ---
+    async function analyzeBusinessNeeds(data) {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+        
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        
+        const prompt = `You are an expert business consultant AI. Analyze the following small business data:
+        - Name: "${data.name}"
+        - Industry: "${data.industry}"
+        - Goals: "${data.goals}"
+        - Challenges: "${data.challenges}"
+        
+        Based on this, generate exactly 3 concise, relevant follow-up questions to better understand their needs for marketing, operations, or growth.
+        Return the questions as a valid JSON object in this format: { "questions": [{ "id": "question1", "text": "Your question here?", "type": "text" or "select", "options": ["Option A", "Option B"] }] }. 
+        For 'select' type, provide 3-4 sensible options. For 'text' type, options should be an empty array.`;
+
+        const payload = {
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+        };
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        
+        const result = await response.json();
+        if (!result.candidates || !result.candidates[0].content.parts[0].text) {
+             throw new Error("Invalid response structure from API.");
+        }
+        const jsonText = result.candidates[0].content.parts[0].text;
+        return JSON.parse(jsonText).questions;
+    }
+
+    // --- Display Follow-Up Questions ---
+    function displayFollowUpQuestions(questions) {
+        addMessageToChat('AI Charger', 'Thanks! I have a few quick questions to help me generate the best tools for you.');
+        
+        questions.forEach(q => {
+            addMessageToChat('AI Charger', q.text);
+            let inputHtml = '';
+            if (q.type === 'select') {
+                const optionsHtml = q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+                inputHtml = `<select id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500">${optionsHtml}</select>`;
+            } else {
+                inputHtml = `<input type="text" id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500" placeholder="Your answer...">`;
+            }
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'mb-4';
+            questionDiv.innerHTML = `<label for="followup-${q.id}" class="font-semibold text-gray-700">${q.text}</label>${inputHtml}`;
+            interactionFormContainer.appendChild(questionDiv);
+        });
+    }
+    
+    function addMessageToChat(sender, message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `p-3 rounded-lg max-w-xs ${sender === 'AI Charger' ? 'bg-red-100' : 'bg-gray-100 ml-auto'}`;
+        messageDiv.textContent = message;
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // --- Generate Outputs Button ---
+    generateBtn.addEventListener('click', async () => {
+        businessData.followUps = {};
+        const followUpInputs = interactionFormContainer.querySelectorAll('input, select');
+        followUpInputs.forEach(input => {
+            const id = input.id.replace('followup-', '');
+            businessData.followUps[id] = input.value;
+        });
+
+        outputSection.classList.remove('hidden');
+        outputSection.scrollIntoView({ behavior: 'smooth' });
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+
+        try {
+            generatedAssets = await generateAllOutputs(businessData);
+            outputLoader.classList.add('hidden');
+            outputGrid.classList.remove('hidden');
+            displayGeneratedOutputs(generatedAssets);
+            premiumSection.classList.remove('hidden');
+            gallerySection.classList.remove('hidden');
+        } catch (error) {
+            outputLoader.innerHTML = `<p class="text-red-500">Error generating assets: ${error.message}. Please try again.</p>`;
+        }
+    });
+
+    // --- Gemini API Call: Generate All Outputs ---
+    async function generateAllOutputs(data) {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+
+        const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+        const textGenPrompt = `You are an expert business and marketing AI. For the business detailed below, generate a JSON object with the following keys:
+        1. "actionPlan": An object with a "title" and a "tasks" array of 5 strings for a first-week action plan.
+        2. "businessPlan": An object with "executiveSummary", "productsServices", "targetMarket", and "marketingStrategy" sections.
+        3. "report": An object with "title", "introduction", a "growthPlan" array (each item having an "emoji", "title", "description"), and a "keyMetric" object ("title", "description").
+        4. "flyerHeadline": A catchy headline for a promotional flyer.
+        5. "posterBlurb": A short, persuasive blurb for a windshield poster.
+        6. "logoPrompt": A detailed, hyperrealistic image generation prompt for a professional logo.
+        7. "scenarioImagePrompt": A prompt for a hyperrealistic image visualizing a success scenario for the business.
+        
+        Business Data: ${JSON.stringify(data)}`;
+
+        const textPayload = {
+            contents: [{ role: "user", parts: [{ text: textGenPrompt }] }],
+            generationConfig: { responseMimeType: "application/json" }
+        };
+
+        const textResponse = await fetch(textApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(textPayload)
+        });
+        if (!textResponse.ok) throw new Error(`Text API error: ${textResponse.statusText}`);
+        const textResult = await textResponse.json();
+        const generatedText = JSON.parse(textResult.candidates[0].content.parts[0].text);
+
+        const [logoResponse, scenarioResponse] = await Promise.all([
+            fetch(imageApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ instances: [{ prompt: generatedText.logoPrompt }], parameters: { "sampleCount": 1 } })
+            }),
+            fetch(imageApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ instances: [{ prompt: generatedText.scenarioImagePrompt }], parameters: { "sampleCount": 1 } })
+            })
+        ]);
+
+        if (!logoResponse.ok) throw new Error(`Logo API error: ${logoResponse.statusText}`);
+        if (!scenarioResponse.ok) throw new Error(`Scenario Image API error: ${scenarioResponse.statusText}`);
+        
+        const logoResult = await logoResponse.json();
+        const scenarioResult = await scenarioResponse.json();
+
+        const logoImageUrl = `data:image/png;base64,${logoResult.predictions[0].bytesBase64Encoded}`;
+        const scenarioImageUrl = `data:image/png;base64,${scenarioResult.predictions[0].bytesBase64Encoded}`;
+
+        const businessName = data.name || "Your Business";
+        const website = data.followUps.hasWebsite || 'aicharger.biz';
+        return {
+            actionPlan: { title: "✨ First Week Action Plan", ...generatedText.actionPlan },
+            businessPlan: { title: "✨ AI-Generated Business Plan", ...generatedText.businessPlan },
+            report: { title: `✨ AI Growth Report for ${businessName}`, ...generatedText.report, imageUrl: scenarioImageUrl },
+            logo: { title: "✨ AI-Generated Logo", imageUrl: logoImageUrl },
+            flyer: { title: "Promotional Flyer", businessName, headline: generatedText.flyerHeadline, phone: "555-1234" },
+            poster: { title: "Windshield Poster", businessName, blurb: generatedText.posterBlurb, callToAction: "Call Now!" },
+            qrCode: { title: "QR Code", url: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(website)}` }
+        };
+    }
+
+    // --- Display Generated Outputs ---
+    function displayGeneratedOutputs(assets) {
+        outputGrid.innerHTML = '';
+        
+        const cardData = {
+            actionPlan: { title: assets.actionPlan.title, content: assets.actionPlan.tasks.map(t => `✔️ ${t}`).join('\n') },
+            businessPlan: { title: assets.businessPlan.title, content: `**Executive Summary:** ${assets.businessPlan.executiveSummary.substring(0, 100)}...` },
+            report: { title: assets.report.title, content: `${assets.report.introduction.substring(0, 100)}...` },
+            logo: { title: assets.logo.title, content: `<div class="flex justify-center items-center h-48 bg-gray-100 rounded-lg"><div class="loader"></div></div>` },
+            flyer: { title: assets.flyer.title, content: `<p class="text-center font-bold">"${assets.flyer.headline}"</p><p class="text-center mt-2">A4 flyer with 8 pull-tabs.</p><div class="text-4xl text-center mt-4">📄</div>` },
+            poster: { title: assets.poster.title, content: `<p class="text-center font-bold">"${assets.poster.blurb}"</p><p class="text-center mt-2">Bold windshield poster.</p><div class="text-4xl text-center mt-4">🚗</div>` }
+        };
+
+        Object.keys(cardData).forEach(key => {
+            const card = document.createElement('div');
+            card.innerHTML = createCard(cardData[key].title, cardData[key].content);
+            outputGrid.appendChild(card);
+            
+            if (key === 'logo') {
+                const img = new Image();
+                img.src = assets.logo.imageUrl;
+                img.onload = () => {
+                    card.querySelector('.loader').parentElement.innerHTML = `<img src="${assets.logo.imageUrl}" alt="AI Generated Logo" class="rounded-lg max-h-full w-auto mx-auto">`;
+                };
+            }
+        });
+    }
+
+    function createCard(title, content) {
+        return `
+            <div class="bg-white p-6 rounded-xl shadow-md flex flex-col h-full">
+                <h4 class="font-bold text-lg mb-3">${title}</h4>
+                <div class="text-gray-600 flex-grow text-sm whitespace-pre-wrap">${content.replace(/\*\*/g, '<strong>')}</div>
+            </div>
+        `;
+    }
+    
+    // --- Download All Assets as ZIP ---
+    async function imageToDataUrl(url) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    downloadAllBtn.addEventListener('click', async () => {
+        showNotification('Zipping files...', '<p>Please wait while we package your assets.</p>');
+        const zip = new JSZip();
+        const { jsPDF } = window.jspdf;
+
+        const reportPdf = await generateReportPDF(jsPDF, generatedAssets.report);
+        zip.file("AI_Growth_Report.pdf", reportPdf.output('blob'));
+
+        const businessPlanPdf = generateBusinessPlanPDF(jsPDF, generatedAssets.businessPlan, businessData.name);
+        zip.file("AI_Business_Plan.pdf", businessPlanPdf.output('blob'));
+
+        const actionPlanPdf = generateActionPlanPDF(jsPDF, generatedAssets.actionPlan, businessData.name);
+        zip.file("First_Week_Action_Plan.pdf", actionPlanPdf.output('blob'));
+
+        const logoResponse = await fetch(generatedAssets.logo.imageUrl);
+        zip.file("logo.png", await logoResponse.blob());
+
+        const qrResponse = await fetch(generatedAssets.qrCode.url);
+        zip.file("qr_code.png", await qrResponse.blob());
+
+        const flyerPdf = generateFlyerPDF(jsPDF, generatedAssets.flyer);
+        zip.file("flyer_with_pulltabs.pdf", flyerPdf.output('blob'));
+
+        const posterPdf = generatePosterPDF(jsPDF, generatedAssets.poster);
+        zip.file("windshield_poster.pdf", posterPdf.output('blob'));
+
+        zip.generateAsync({ type: "blob" }).then(content => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
+            link.download = `${businessData.name.replace(/\s+/g, '_')}_AI_Toolkit.zip`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            notificationModal.classList.add('hidden');
+        });
+    });
+
+    async function generateReportPDF(PDF, data) {
+        const doc = new PDF();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        let y = 20;
+
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.title, pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        const introLines = doc.splitTextToSize(data.introduction, 170);
+        doc.text(introLines, 20, y);
+        y += introLines.length * 5 + 10;
+
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Your AI Growth Plan:", 20, y);
+        y += 10;
+
+        data.growthPlan.forEach(plan => {
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            const titleLines = doc.splitTextToSize(`${plan.emoji} ${plan.title}`, 160);
+            doc.text(titleLines, 25, y);
+            y += titleLines.length * 5;
+
+            doc.setFont("helvetica", "normal");
+            const descLines = doc.splitTextToSize(plan.description, 160);
+            doc.text(descLines, 25, y);
+            y += descLines.length * 5 + 5;
+            if (y > pageHeight - 30) { doc.addPage(); y = 20; }
+        });
+        
+        y += 5;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.keyMetric.title, 20, y);
+        y += 7;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        const metricLines = doc.splitTextToSize(data.keyMetric.description, 170);
+        doc.text(metricLines, 20, y);
+        y += metricLines.length * 5 + 10;
+        
+        if (y > pageHeight - 80) { doc.addPage(); y = 20; }
+
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("Visualizing Your Success:", 20, y);
+        y += 10;
+        
+        try {
+            const imageDataUrl = await imageToDataUrl(data.imageUrl);
+            doc.addImage(imageDataUrl, 'PNG', 20, y, 170, 0);
+        } catch (e) {
+            doc.text("Could not load scenario image.", 20, y);
+        }
+
+        return doc;
+    }
+
+    function generateBusinessPlanPDF(PDF, data, businessName) {
+        const doc = new PDF();
+        let y = 20;
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text(`One-Page Business Plan for ${businessName}`, pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        const addSection = (title, content) => {
+            if (y > pageHeight - 40) { doc.addPage(); y = 20; }
+            doc.setFontSize(16);
+            doc.setFont("helvetica", "bold");
+            doc.text(title, 20, y);
+            y += 8;
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            const lines = doc.splitTextToSize(content, 170);
+            doc.text(lines, 20, y);
+            y += lines.length * 5 + 10;
+        };
+
+        addSection("Executive Summary", data.executiveSummary);
+        addSection("Products / Services", data.productsServices);
+        addSection("Target Market", data.targetMarket);
+        addSection("Marketing & Sales Strategy", data.marketingStrategy);
+        
+        return doc;
+    }
+    
+    function generateActionPlanPDF(PDF, data, businessName) {
+        const doc = new PDF();
+        let y = 20;
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.text(`First Week Action Plan for ${businessName}`, pageWidth / 2, y, { align: 'center' });
+        y += 15;
+
+        data.tasks.forEach((task, index) => {
+            if (y > pageHeight - 20) { doc.addPage(); y = 20; }
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.text(`[  ] Day ${index + 1}: ${task}`, 20, y);
+            y += 10;
+        });
+        
+        return doc;
+    }
+
+    function generateFlyerPDF(PDF, data) {
+        const doc = new PDF();
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        
+        doc.setFontSize(30);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.headline, pageWidth / 2, 40, { align: 'center', maxWidth: 180 });
+        
+        doc.setFontSize(22);
+        doc.text(data.businessName, pageWidth / 2, 60, { align: 'center' });
+        
+        const tabWidth = (pageWidth - 20) / 8;
+        const tabStartY = pageHeight - 50;
+        doc.line(10, tabStartY, pageWidth - 10, tabStartY);
+
+        for (let i = 0; i < 8; i++) {
+            const x = 10 + i * tabWidth;
+            doc.line(x, tabStartY, x, pageHeight - 10);
+            doc.setFontSize(8);
+            doc.text(data.businessName, x + 2, tabStartY + 10, { angle: 90 });
+            doc.setFontSize(10);
+            doc.text(data.phone, x + 8, tabStartY + 25, { angle: 90 });
+        }
+        return doc;
+    }
+
+    function generatePosterPDF(PDF, data) {
+        const doc = new PDF({orientation: 'landscape'});
+        const pageHeight = doc.internal.pageSize.height;
+        const pageWidth = doc.internal.pageSize.width;
+        
+        doc.setFontSize(50);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.businessName.toUpperCase(), pageWidth / 2, pageHeight / 2 - 30, { align: 'center' });
+        
+        doc.setFontSize(30);
+        doc.setFont("helvetica", "normal");
+        doc.text(data.blurb, pageWidth / 2, pageHeight / 2, { align: 'center', maxWidth: 260 });
+
+        doc.setFontSize(40);
+        doc.setFont("helvetica", "bold");
+        doc.text(data.callToAction, pageWidth / 2, pageHeight / 2 + 40, { align: 'center' });
+        
+        return doc;
+    }
+});
+
+</script>
+
+</body>
+</html>
