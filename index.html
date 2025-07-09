@@ -108,7 +108,8 @@
         <section id="input-section" class="scroll-mt-20 bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
             <div class="text-center">
                 <h3 class="text-3xl font-bold mb-2">1. Tell Us About Your Business</h3>
-                <p class="text-gray-600 mb-8">Provide some details so our AI can tailor its recommendations just for you.</p>
+                <p class="text-gray-600 mb-6">Provide some details so our AI can tailor its recommendations just for you.</p>
+                <button type="button" id="idea-spark-btn" class="gemini-btn text-red-600 font-semibold mb-6">Spark some ideas for me!</button>
             </div>
             <form id="business-form">
                 <div class="mb-6">
@@ -295,6 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveApiKeyBtn = document.getElementById('save-api-key');
     const businessForm = document.getElementById('business-form');
     const nameGeneratorBtn = document.getElementById('name-generator-btn');
+    const ideaSparkBtn = document.getElementById('idea-spark-btn');
     const interactionSection = document.getElementById('interaction-section');
     const outputSection = document.getElementById('output-section');
     const premiumSection = document.getElementById('premium-section');
@@ -476,6 +478,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             showNotification('Error', `<p>Could not generate names: ${error.message}</p>`);
+        }
+    });
+    
+    // --- Gemini API Call: Idea Spark ---
+    ideaSparkBtn.addEventListener('click', async () => {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+
+        showNotification('Sparking Ideas...', '<div class="flex justify-center"><div class="loader"></div></div>');
+
+        try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const prompt = `You are a small business idea generator. Create 4 diverse and specific small business scenarios. For each scenario, provide a business name, industry, a primary goal, and a primary challenge. Return the scenarios as a valid JSON object in this format: { "scenarios": [{ "name": "...", "industry": "...", "goals": "...", "challenges": "..." }] }`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(errorBody.error.message);
+            }
+            
+            const result = await response.json();
+            const jsonText = result.candidates[0].content.parts[0].text;
+            const scenarios = JSON.parse(jsonText).scenarios;
+
+            let scenarioButtons = scenarios.map(s => `<button class="scenario-btn w-full text-left p-3 hover:bg-red-100 rounded border border-gray-200" data-name="${s.name}" data-industry="${s.industry}" data-goals="${s.goals}" data-challenges="${s.challenges}"><strong>${s.name}</strong><br><span class="text-sm text-gray-600">${s.industry}</span></button>`).join('');
+            showNotification('Try one of these scenarios:', `<div class="space-y-2">${scenarioButtons}</div>`);
+
+            document.querySelectorAll('.scenario-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.getElementById('businessName').value = button.dataset.name;
+                    document.getElementById('industry').value = button.dataset.industry;
+                    document.getElementById('goals').value = button.dataset.goals;
+                    document.getElementById('challenges').value = button.dataset.challenges;
+                    notificationModal.classList.add('hidden');
+                });
+            });
+
+        } catch (error) {
+            showNotification('Error', `<p>Could not generate ideas: ${error.message}</p>`);
         }
     });
 
