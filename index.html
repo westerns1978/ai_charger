@@ -582,13 +582,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 const optionsHtml = q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
                 inputHtml = `<select id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500">${optionsHtml}</select>`;
             } else {
-                inputHtml = `<input type="text" id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500" placeholder="Your answer...">`;
+                inputHtml = `<div class="flex items-center gap-2"><input type="text" id="followup-${q.id}" class="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:ring-2 focus:ring-red-500" placeholder="Your answer..."><button type="button" class="get-answer-idea-btn gemini-btn text-sm text-red-600 font-semibold whitespace-nowrap mt-2" data-question-id="${q.id}" data-question-text="${q.text}">Get Idea</button></div>`;
             }
             const questionDiv = document.createElement('div');
             questionDiv.className = 'mb-4';
             questionDiv.innerHTML = `<label for="followup-${q.id}" class="font-semibold text-gray-700">${q.text}</label>${inputHtml}`;
             interactionFormContainer.appendChild(questionDiv);
         });
+
+        document.querySelectorAll('.get-answer-idea-btn').forEach(button => {
+            button.addEventListener('click', getAnswerIdea);
+        });
+    }
+    
+    // --- Gemini API Call: Get Answer Idea ---
+    async function getAnswerIdea(event) {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+
+        const button = event.target;
+        const questionId = button.dataset.questionId;
+        const questionText = button.dataset.questionText;
+        const targetInput = document.getElementById(`followup-${questionId}`);
+
+        showNotification('Brainstorming Answers...', '<div class="flex justify-center"><div class="loader"></div></div>');
+
+        try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const prompt = `You are a creative business strategist. For a business with the profile: ${JSON.stringify(businessData)}, provide 3 distinct, creative example answers to the question: "${questionText}". Return the answers as a valid JSON object in this format: { "answers": ["Answer 1", "Answer 2", "Answer 3"] }`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(errorBody.error.message);
+            }
+            
+            const result = await response.json();
+            const jsonText = result.candidates[0].content.parts[0].text;
+            const answers = JSON.parse(jsonText).answers;
+
+            let answerButtons = answers.map(answer => `<button class="answer-suggestion-btn w-full text-left p-2 hover:bg-red-100 rounded">${answer}</button>`).join('');
+            showNotification('Here are some ideas:', `<div class="space-y-2">${answerButtons}</div>`);
+
+            document.querySelectorAll('.answer-suggestion-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    targetInput.value = button.textContent;
+                    notificationModal.classList.add('hidden');
+                });
+            });
+
+        } catch (error) {
+            showNotification('Error', `<p>Could not generate ideas: ${error.message}</p>`);
+        }
     }
     
     function addMessageToChat(sender, message) {
