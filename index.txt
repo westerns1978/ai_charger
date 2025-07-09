@@ -70,6 +70,14 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
+    <!-- API Key Input Section -->
+    <div id="api-key-section" class="bg-yellow-100 p-4 text-center sticky top-0 z-50 shadow-md">
+        <label for="api-key-input" class="font-bold mr-2">Enter Gemini API Key:</label>
+        <input type="password" id="api-key-input" class="p-2 border border-gray-400 rounded-lg" placeholder="Paste your key to activate AI">
+        <button id="save-api-key" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg ml-2">Save Key</button>
+        <p class="text-xs text-gray-600 mt-1">Your key is saved in your browser only and is required to power the AI features.</p>
+    </div>
+
     <!-- Header & Hero Section -->
     <header id="hero-section" class="hero-gradient text-black">
         <div class="container mx-auto px-6 py-12 md:py-16">
@@ -138,6 +146,20 @@
                 </button>
             </form>
         </section>
+        
+        <!-- Video Showcase Section -->
+        <section id="video-showcase" class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">See AI Charger in Action</h3>
+                <p class="text-lg text-gray-600 mt-2">Watch how our AI guide can help you visualize success.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <video src="https://i.imgur.com/4fE0P7e.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/Fk8aL9k.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/w1sUjJ6.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <video src="https://i.imgur.com/qE4J3yL.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+            </div>
+        </section>
 
         <!-- AI Interaction Section -->
         <section id="interaction-section" class="hidden bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto mt-16">
@@ -172,6 +194,19 @@
             </div>
         </section>
         
+        <!-- Image Gallery Section -->
+        <section id="gallery-section" class="mt-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-extrabold text-gray-900">Your AI Guide</h3>
+                <p class="text-lg text-gray-600 mt-2">Friendly, intelligent, and ready to help.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="https://i.imgur.com/azA55p9.png" alt="AI Guide at a desk" class="rounded-lg shadow-lg w-full h-full object-cover">
+                <img src="https://i.imgur.com/PutX8gw.png" alt="AI Guide in action" class="rounded-lg shadow-lg w-full h-full object-cover">
+                <img src="https://i.imgur.com/f3YBM5C.png" alt="AI Guide analyzing charts" class="rounded-lg shadow-lg w-full h-full object-cover">
+            </div>
+        </section>
+
         <!-- Premium Upsell & Download Section -->
         <section id="premium-section" class="hidden mt-16">
             <div class="text-center mb-12">
@@ -255,11 +290,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- DOM Element Selectors ---
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveApiKeyBtn = document.getElementById('save-api-key');
     const businessForm = document.getElementById('business-form');
     const nameGeneratorBtn = document.getElementById('name-generator-btn');
     const interactionSection = document.getElementById('interaction-section');
     const outputSection = document.getElementById('output-section');
     const premiumSection = document.getElementById('premium-section');
+    const gallerySection = document.getElementById('gallery-section');
     const interactionLoader = document.getElementById('interaction-loader');
     const chatContainer = document.getElementById('chat-container');
     const interactionFormContainer = document.getElementById('interaction-form-container');
@@ -278,6 +316,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State Management ---
     let businessData = {};
     let generatedAssets = {};
+    let userApiKey = localStorage.getItem('geminiApiKey') || '';
+
+    // --- API Key Handling ---
+    apiKeyInput.value = userApiKey;
+    saveApiKeyBtn.addEventListener('click', () => {
+        userApiKey = apiKeyInput.value;
+        localStorage.setItem('geminiApiKey', userApiKey);
+        showNotification('API Key Saved', '<p>Your key has been saved in your browser for this session.</p>');
+    });
+    
+    function getApiKey() {
+        if (!userApiKey) {
+            showNotification('API Key Required', '<p>Please enter your Gemini API key at the top of the page to activate the AI features.</p>');
+            return null;
+        }
+        return userApiKey;
+    }
 
     // --- Notification Modal Logic ---
     const showNotification = (title, content) => {
@@ -339,6 +394,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Form Submission & AI Interaction ---
     businessForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (!getApiKey()) return;
+        
         businessData = {
             name: document.getElementById('businessName').value,
             industry: document.getElementById('industry').value,
@@ -361,6 +418,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Gemini API Call: Business Name Generator ---
     nameGeneratorBtn.addEventListener('click', async () => {
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+        
         const industry = document.getElementById('industry').value;
         const goals = document.getElementById('goals').value;
         if (!industry || !goals) {
@@ -371,7 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotification('Generating Names...', '<div class="flex justify-center"><div class="loader"></div></div>');
 
         try {
-            const apiKey = "AIzaSyCzIMtbvVRemO7sjQBPVUQZ0ftp9VSiDfo"; // PASTE YOUR KEY HERE
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             const prompt = `You are a creative branding expert. Based on the industry "${industry}" and the goal "${goals}", generate 5 catchy and professional business names. Return the names as a valid JSON object in this format: { "names": ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5"] }`;
             
@@ -409,7 +468,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Gemini API Call: Analyze Needs & Generate Questions ---
     async function analyzeBusinessNeeds(data) {
-        const apiKey = "AIzaSyCzIMtbvVRemO7sjQBPVUQZ0ftp9VSiDfo"; // PASTE YOUR KEY HERE
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+        
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         
         const prompt = `You are an expert business consultant AI. Analyze the following small business data:
@@ -491,6 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
             outputGrid.classList.remove('hidden');
             displayGeneratedOutputs(generatedAssets);
             premiumSection.classList.remove('hidden');
+            gallerySection.classList.remove('hidden');
         } catch (error) {
             outputLoader.innerHTML = `<p class="text-red-500">Error generating assets: ${error.message}. Please try again.</p>`;
         }
@@ -498,7 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Gemini API Call: Generate All Outputs ---
     async function generateAllOutputs(data) {
-        const apiKey = "AIzaSyCzIMtbvVRemO7sjQBPVUQZ0ftp9VSiDfo"; // PASTE YOUR KEY HERE
+        const apiKey = getApiKey();
+        if (!apiKey) return;
+
         const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
 
@@ -814,13 +878,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-/*
---- DEPLOYMENT & API KEY INSTRUCTIONS ---
-
-This code is ready for deployment. The API key placeholders are designed to be replaced
-when you follow the deployment guide.
-
-*/
 </script>
 
 </body>
