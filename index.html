@@ -208,56 +208,18 @@
             </div>
         </section>
 
-        <!-- Premium Upsell & Download Section -->
-        <section id="premium-section" class="hidden mt-16">
-            <div class="text-center mb-12">
-                <h3 class="text-3xl font-extrabold text-gray-900">Take the Next Step</h3>
-                <p class="text-lg text-gray-600 mt-2">Your free toolkit is ready. Unlock even more power to grow your business.</p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <!-- Free Toolkit -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg border-2 border-red-500">
-                    <h4 class="text-2xl font-bold mb-4">Free Toolkit</h4>
-                    <p class="text-gray-600 mb-6">Everything you've seen so far, packaged and ready to go.</p>
-                    <ul class="space-y-2 text-gray-700 mb-8">
-                        <li>✔️ First Week Action Plan</li>
-                        <li>✔️ AI-Generated Business Plan</li>
-                        <li>✔️ AI-Generated Report</li>
-                        <li>✔️ Custom Logo</li>
-                        <li>✔️ Marketing Assets</li>
-                    </ul>
-                    <button id="download-all-btn" class="w-full bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 shadow-md">
-                        Download Free Toolkit
-                    </button>
+        <!-- Share & Download Section -->
+        <section id="share-section" class="hidden mt-16">
+             <div class="bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto text-center">
+                <h3 class="text-3xl font-extrabold text-gray-900">Share & Download</h3>
+                <p class="text-lg text-gray-600 mt-2 mb-6">Your toolkit is ready. Share it with your team or download it now.</p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <button id="copy-link-btn" class="bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 transition">Copy Shareable Link</button>
+                    <button id="download-all-btn" class="bg-red-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-red-700 transition">Download Toolkit (.zip)</button>
                 </div>
-                <!-- Advanced Toolkit -->
-                <div class="bg-gray-800 text-white p-8 rounded-2xl shadow-lg">
-                    <h4 class="text-2xl font-bold mb-4">Advanced Toolkit <span class="text-sm text-red-400">(Coming Soon)</span></h4>
-                    <p class="text-gray-300 mb-6">Supercharge your growth with deeper analysis and more assets.</p>
-                    <ul class="space-y-2 text-gray-200 mb-8">
-                        <li>✔️ Everything in Free Toolkit</li>
-                        <li>✔️ In-Depth Competitor Analysis</li>
-                        <li>✔️ A/B Tested Ad Copy</li>
-                        <li>✔️ Full Social Media Campaign</li>
-                        <li>✔️ AI-Generated Video Ad Script</li>
-                    </ul>
-                    <button class="w-full bg-red-500 font-bold py-3 px-8 rounded-lg text-lg cursor-not-allowed opacity-50">
-                        Unlock for $49
-                    </button>
-                </div>
-                <!-- Human Consultation -->
-                <div class="bg-white p-8 rounded-2xl shadow-lg">
-                    <h4 class="text-2xl font-bold mb-4">1-on-1 Consultation <span class="text-sm text-red-400">(Coming Soon)</span></h4>
-                    <p class="text-gray-600 mb-6">Work directly with a human marketing expert to implement your AI strategy.</p>
-                     <ul class="space-y-2 text-gray-700 mb-8">
-                        <li>✔️ 60-Minute Strategy Call</li>
-                        <li>✔️ Custom Implementation Plan</li>
-                        <li>✔️ Review of Your AI Toolkit</li>
-                        <li>✔️ Personalized Q&A Session</li>
-                    </ul>
-                    <button class="w-full bg-gray-300 font-bold py-3 px-8 rounded-lg text-lg cursor-not-allowed opacity-50">
-                        Book for $299
-                    </button>
+                 <div class="flex justify-center space-x-4 mt-6">
+                    <a href="https://twitter.com/intent/tweet?text=Just%20charged%20my%20biz%20with%20AI%20Charger!%20%23SmallBiz%20%23AI&url=https://aicharger.biz" target="_blank" class="bg-gray-800 text-white font-semibold py-2 px-6 rounded-lg hover:bg-gray-900 transition">Share on X</a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https://aicharger.biz" target="_blank" class="bg-blue-800 text-white font-semibold py-2 px-6 rounded-lg hover:bg-blue-900 transition">Share on Facebook</a>
                 </div>
             </div>
         </section>
@@ -299,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ideaSparkBtn = document.getElementById('idea-spark-btn');
     const interactionSection = document.getElementById('interaction-section');
     const outputSection = document.getElementById('output-section');
-    const premiumSection = document.getElementById('premium-section');
+    const shareSection = document.getElementById('share-section');
     const gallerySection = document.getElementById('gallery-section');
     const interactionLoader = document.getElementById('interaction-loader');
     const chatContainer = document.getElementById('chat-container');
@@ -308,6 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputGrid = document.getElementById('output-grid');
     const outputLoader = document.getElementById('output-loader');
     const downloadAllBtn = document.getElementById('download-all-btn');
+    const copyLinkBtn = document.getElementById('copy-link-btn');
     const dictateBtn = document.getElementById('dictate-btn');
     const docUpload = document.getElementById('doc-upload');
     const uploadStatus = document.getElementById('upload-status');
@@ -674,6 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
             displayGeneratedOutputs(generatedAssets);
             premiumSection.classList.remove('hidden');
             gallerySection.classList.remove('hidden');
+            shareSection.classList.remove('hidden');
         } catch (error) {
             outputLoader.innerHTML = `<p class="text-red-500">Error generating assets: ${error.message}. Please try again.</p>`;
         }
@@ -797,7 +761,15 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
     
-    // --- Download All Assets as ZIP ---
+    // --- Download & Share Logic ---
+    copyLinkBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showNotification('Link Copied!', '<p>The URL has been copied to your clipboard.</p>');
+        }, () => {
+            showNotification('Error', '<p>Could not copy the link.</p>');
+        });
+    });
+
     async function imageToDataUrl(url) {
         const response = await fetch(url);
         const blob = await response.blob();
