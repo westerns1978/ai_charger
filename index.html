@@ -105,60 +105,54 @@
     <main class="container mx-auto px-6 py-12">
         
         <!-- Input Section -->
-        <section id="input-section" class="scroll-mt-20 bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
-            <div class="text-center">
-                <h3 class="text-3xl font-bold mb-2">1. Tell Us About Your Business</h3>
-                <p class="text-gray-600 mb-6">Provide some details so our AI can tailor its recommendations just for you.</p>
-                <button type="button" id="idea-spark-btn" class="gemini-btn text-red-600 font-semibold mb-6">Spark some ideas for me!</button>
-            </div>
-            <form id="business-form">
-                <div class="mb-6">
-                    <label for="businessName" class="font-bold mb-2 block">Business Name</label>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="businessName" placeholder="e.g., Jenny's Clean Sweep" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
-                        <button type="button" id="name-generator-btn" class="gemini-btn text-sm text-red-600 font-semibold whitespace-nowrap">Need a name idea?</button>
-                    </div>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <input type="text" id="industry" placeholder="Industry (e.g., Home Services)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
-                    <input type="text" id="goals" placeholder="Main Goal (e.g., get more customers)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
-                </div>
-                
-                <div class="mb-6">
-                    <label class="font-bold mb-2 block">What are your biggest challenges?</label>
-                    <div class="relative">
-                        <textarea id="challenges" rows="4" placeholder="Type here, paste content, or use the buttons below..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"></textarea>
-                        <div class="absolute bottom-3 right-3 flex space-x-2">
-                             <button type="button" id="dictate-btn" class="p-2 bg-gray-200 rounded-full hover:bg-red-100" aria-label="Talk to AI">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a5 5 0 00-10 0v4a5 5 0 007 4.472z" clip-rule="evenodd" /></svg>
-                            </button>
-                             <label for="doc-upload" class="p-2 bg-gray-200 rounded-full hover:bg-red-100 cursor-pointer" aria-label="Upload Document">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                             </label>
-                             <input type="file" id="doc-upload" class="hidden" accept=".pdf,.docx,.txt">
+        <section id="input-section" class="scroll-mt-20 bg-white p-8 rounded-2xl shadow-lg max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Left Column: Form -->
+                <div>
+                    <h3 class="text-3xl font-bold mb-2">1. Tell Us About Your Business</h3>
+                    <p class="text-gray-600 mb-6">Provide some details so our AI can tailor its recommendations just for you.</p>
+                     <button type="button" id="idea-spark-btn" class="gemini-btn text-red-600 font-semibold mb-6">Spark some ideas for me!</button>
+                    <form id="business-form">
+                        <div class="mb-6">
+                            <label for="businessName" class="font-bold mb-2 block">Business Name</label>
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="businessName" placeholder="e.g., Jenny's Clean Sweep" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                                <button type="button" id="name-generator-btn" class="gemini-btn text-sm text-red-600 font-semibold whitespace-nowrap">Need a name idea?</button>
+                            </div>
                         </div>
-                    </div>
-                    <p id="upload-status" class="text-sm text-gray-500 mt-2"></p>
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            <input type="text" id="industry" placeholder="Industry (e.g., Home Services)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                            <input type="text" id="goals" placeholder="Main Goal (e.g., get more customers)" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" required>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="font-bold mb-2 block">What are your biggest challenges?</label>
+                            <div class="relative">
+                                <textarea id="challenges" rows="4" placeholder="Type here, paste content, or use the buttons below..." class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500"></textarea>
+                                <div class="absolute bottom-3 right-3 flex space-x-2">
+                                     <button type="button" id="dictate-btn" class="p-2 bg-gray-200 rounded-full hover:bg-red-100" aria-label="Talk to AI">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a5 5 0 00-10 0v4a5 5 0 007 4.472z" clip-rule="evenodd" /></svg>
+                                    </button>
+                                     <label for="doc-upload" class="p-2 bg-gray-200 rounded-full hover:bg-red-100 cursor-pointer" aria-label="Upload Document">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                                     </label>
+                                     <input type="file" id="doc-upload" class="hidden" accept=".pdf,.docx,.txt">
+                                </div>
+                            </div>
+                            <p id="upload-status" class="text-sm text-gray-500 mt-2"></p>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 flex items-center justify-center shadow-md">
+                            Analyze My Business
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </button>
+                    </form>
                 </div>
-                
-                <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg hover:bg-red-700 transition duration-300 flex items-center justify-center shadow-md">
-                    Analyze My Business
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                </button>
-            </form>
-        </section>
-        
-        <!-- Video Showcase Section -->
-        <section id="video-showcase" class="mt-16">
-            <div class="text-center mb-12">
-                <h3 class="text-3xl font-extrabold text-gray-900">See AI Charger in Action</h3>
-                <p class="text-lg text-gray-600 mt-2">Watch how our AI guide can help you visualize success.</p>
-            </div>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <video src="https://i.imgur.com/4fE0P7e.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
-                <video src="https://i.imgur.com/Fk8aL9k.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
-                <video src="https://i.imgur.com/w1sUjJ6.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
-                <video src="https://i.imgur.com/qE4J3yL.mp4" autoplay loop muted playsinline class="rounded-lg shadow-lg w-full"></video>
+                <!-- Right Column: Animated Mascot -->
+                <div class="hidden md:flex flex-col items-center justify-center">
+                    <video src="https://i.imgur.com/3DwcLVk.mp4" autoplay loop muted playsinline class="rounded-lg shadow-2xl w-full max-w-sm"></video>
+                    <p class="text-center text-gray-600 mt-6 font-semibold text-lg">Your personal AI business consultant, ready to help you grow.</p>
+                </div>
             </div>
         </section>
 
