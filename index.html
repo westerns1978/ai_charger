@@ -290,6 +290,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- DOM Element Selectors ---
+    const apiKeySection = document.getElementById('api-key-section');
     const apiKeyInput = document.getElementById('api-key-input');
     const saveApiKeyBtn = document.getElementById('save-api-key');
     const businessForm = document.getElementById('business-form');
@@ -319,15 +320,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let userApiKey = localStorage.getItem('geminiApiKey') || '';
 
     // --- API Key Handling ---
-    apiKeyInput.value = userApiKey;
+    if (userApiKey) {
+        apiKeyInput.value = userApiKey;
+        apiKeySection.classList.add('hidden'); // Hide the bar if key exists
+    }
+    
     saveApiKeyBtn.addEventListener('click', () => {
         userApiKey = apiKeyInput.value;
-        localStorage.setItem('geminiApiKey', userApiKey);
-        showNotification('API Key Saved', '<p>Your key has been saved in your browser for this session.</p>');
+        if(userApiKey) {
+            localStorage.setItem('geminiApiKey', userApiKey);
+            showNotification('API Key Saved', '<p>Your key has been saved in your browser. The page will now reload.</p>');
+            setTimeout(() => window.location.reload(), 2000);
+        } else {
+            showNotification('Error', '<p>Please enter a valid API key.</p>');
+        }
     });
     
     function getApiKey() {
         if (!userApiKey) {
+            apiKeySection.classList.remove('hidden');
             showNotification('API Key Required', '<p>Please enter your Gemini API key at the top of the page to activate the AI features.</p>');
             return null;
         }
@@ -599,6 +610,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const textResult = await textResponse.json();
         const generatedText = JSON.parse(textResult.candidates[0].content.parts[0].text);
+
+        if (!generatedText.logoPrompt || !generatedText.scenarioImagePrompt) {
+            throw new Error("The AI failed to generate the necessary image prompts. Please try again with a more detailed business description.");
+        }
 
         const [logoResponse, scenarioResponse] = await Promise.all([
             fetch(imageApiUrl, {
