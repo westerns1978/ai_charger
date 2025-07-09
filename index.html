@@ -444,7 +444,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+            if (!response.ok) {
+                const errorBody = await response.json();
+                throw new Error(errorBody.error.message);
+            }
             
             const result = await response.json();
             const jsonText = result.candidates[0].content.parts[0].text;
@@ -494,7 +497,10 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+        if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(errorBody.error.message);
+        }
         
         const result = await response.json();
         if (!result.candidates || !result.candidates[0].content.parts[0].text) {
@@ -587,7 +593,10 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(textPayload)
         });
-        if (!textResponse.ok) throw new Error(`Text API error: ${textResponse.statusText}`);
+        if (!textResponse.ok) {
+            const errorBody = await textResponse.json();
+            throw new Error(`Text API error (${textResponse.status}): ${errorBody.error.message}`);
+        }
         const textResult = await textResponse.json();
         const generatedText = JSON.parse(textResult.candidates[0].content.parts[0].text);
 
@@ -604,8 +613,14 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         ]);
 
-        if (!logoResponse.ok) throw new Error(`Logo API error: ${logoResponse.statusText}`);
-        if (!scenarioResponse.ok) throw new Error(`Scenario Image API error: ${scenarioResponse.statusText}`);
+        if (!logoResponse.ok) {
+            const errorBody = await logoResponse.json();
+            throw new Error(`Logo API error (${logoResponse.status}): ${errorBody.error.message}`);
+        }
+        if (!scenarioResponse.ok) {
+            const errorBody = await scenarioResponse.json();
+            throw new Error(`Scenario Image API error (${scenarioResponse.status}): ${errorBody.error.message}`);
+        }
         
         const logoResult = await logoResponse.json();
         const scenarioResult = await scenarioResponse.json();
