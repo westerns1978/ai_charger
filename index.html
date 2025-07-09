@@ -561,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Gemini API Call: Generate All Outputs ---
     async function generateAllOutputs(data) {
         const apiKey = getApiKey();
-        if (!apiKey) return;
+        if (!apiKey) throw new Error("API Key not found.");
 
         const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
@@ -882,48 +882,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
-```
-
-### How to Share and Use Your AI Charger App
-
-You've built a powerful tool. Here’s a clear guide on how to share it with your team, what it can do, and the rules of the road.
-
----
-
-#### **How to Share with Your Team (The Easy Way)**
-
-This process is designed to be simple and repeatable.
-
-1.  **Share the Vercel Link:** Copy the live URL from your Vercel deployment (e.g., `https://ai-charger-app.vercel.app`). This is the link to the website.
-2.  **Share the API Key:** Separately, send your team the **new, safe** Gemini API key you created. You can send this via a secure message, email, or Slack.
-3.  **Their First Visit:** When a team member opens the Vercel link for the first time, they will see the yellow bar at the top. They just need to paste the API key you gave them into the box and click "Save Key."
-
-That's it. The key will be saved in their browser's local storage, so they only have to do this once on each computer they use.
-
----
-
-#### **What Can This App Do? (Capabilities)**
-
-This app is a multi-talented AI toolkit. Right now, it can generate:
-
-* **Hyper-Realistic Logos:** Creates a unique, professional logo based on the user's business.
-* **Formatted PDF Reports:** Delivers a detailed growth plan with emojis and a custom-generated success image.
-* **One-Page Business Plans:** Generates a structured business plan with key sections, ready to be used.
-* **First Week Action Plans:** Provides a concrete, day-by-day checklist for what to do first.
-* **Marketing Materials:** Creates flyers and posters with AI-written headlines and copy.
-* **QR Codes:** Instantly generates a QR code for a website.
-* **Business Names:** Helps users brainstorm names if they're just starting out.
-
-All of these assets are bundled into a single `.zip` file for easy download.
-
----
-
-#### **What Are the Rules and Restrictions?**
-
-This is important for managing expectations and costs.
-
-* **API Usage Costs:** The Gemini API has a free tier, but heavy use (especially of the image generation) will eventually incur costs. By enabling billing, you've allowed this to happen. You can monitor your usage and set budgets in your [Google Cloud Console](https://console.cloud.google.com/).
-* **Rate Limits:** The free tier of the Gemini API has rate limits (e.g., a certain number of requests per minute). If many people use the app at once, you might temporarily hit this limit. For a small team, this is unlikely to be an issue.
-* **Image Generation:** The AI image models are powerful but not perfect. Sometimes a generated logo might need a second try to get it just right. You can simply run the process again to get a different result.
-
-You now have a powerful, shareable tool and a clear, repeatable process for deploying your projec
