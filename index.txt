@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotification('Generating Names...', '<div class="flex justify-center"><div class="loader"></div></div>');
 
         try {
-            const apiKey = ""; // API key is handled by the environment.
+            const apiKey = "YOUR_GEMINI_API_KEY_HERE"; // Placeholder for API key
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
             const prompt = `You are a creative branding expert. Based on the industry "${industry}" and the goal "${goals}", generate 5 catchy and professional business names. Return the names as a valid JSON object in this format: { "names": ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5"] }`;
             
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Gemini API Call: Analyze Needs & Generate Questions ---
     async function analyzeBusinessNeeds(data) {
-        const apiKey = ""; // API key is handled by the environment.
+        const apiKey = "YOUR_GEMINI_API_KEY_HERE"; // Placeholder for API key
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         
         const prompt = `You are an expert business consultant AI. Analyze the following small business data:
@@ -498,12 +498,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Gemini API Call: Generate All Outputs ---
     async function generateAllOutputs(data) {
-        const apiKey = ""; // API key is handled by the environment.
+        const apiKey = "YOUR_GEMINI_API_KEY_HERE"; // Placeholder for API key
         const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
         const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
 
         const textGenPrompt = `You are an expert business and marketing AI. For the business detailed below, generate a JSON object with the following keys:
-        1. "actionPlan": An object with a "title" and a "tasks" array (each item being a string for a first-week task).
+        1. "actionPlan": An object with a "title" and a "tasks" array of 5 strings for a first-week action plan.
         2. "businessPlan": An object with "executiveSummary", "productsServices", "targetMarket", and "marketingStrategy" sections.
         3. "report": An object with "title", "introduction", a "growthPlan" array (each item having an "emoji", "title", "description"), and a "keyMetric" object ("title", "description").
         4. "flyerHeadline": A catchy headline for a promotional flyer.
@@ -616,7 +616,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const zip = new JSZip();
         const { jsPDF } = window.jspdf;
 
-        // Generate and add all files to the zip
         const reportPdf = await generateReportPDF(jsPDF, generatedAssets.report);
         zip.file("AI_Growth_Report.pdf", reportPdf.output('blob'));
 
@@ -818,17 +817,82 @@ document.addEventListener('DOMContentLoaded', () => {
 /*
 --- DEPLOYMENT & API KEY INSTRUCTIONS ---
 
-1.  **Cloudflare Pages Deployment:**
-    a.  Go to your Cloudflare dashboard.
-    b.  Navigate to Workers & Pages -> Create application -> Pages -> Upload assets.
-    c.  Drag and drop this single HTML file into the upload box.
-    d.  Click "Deploy site". Cloudflare will host the file and provide you with a URL (e.g., aicharger.pages.dev).
-
-2.  **Gemini API Key:**
-    The Gemini API key is now handled automatically by the environment. There is no need to manually insert it into the code. The application will make live API calls as long as it's running in an environment where the key is provided.
+This code is ready for deployment. The API key placeholders are designed to be replaced
+when you follow the deployment guide.
 
 */
 </script>
 
 </body>
 </html>
+```
+
+### Your Foolproof Guide to Going Live
+
+You're ready. The app is powerful, and the design is locked in. Let's get this on the web so you can share it. This guide is designed to be as simple and clear as possible.
+
+---
+
+#### **Step 1: Get Your Code & API Key**
+
+1.  **Copy the Final Code:** In the `AI Charger - Final Version` window above, click the "Copy" button in the top-right corner.
+2.  **Create the `index.html` File:**
+    * On your computer, open a plain text editor (Notepad, TextEdit, VS Code, etc.).
+    * Paste the code.
+    * Save the file with the exact name: `index.html`.
+3.  **Get Your Gemini API Key:**
+    * Go to [Google AI Studio](https://aistudio.google.com/).
+    * Click **"Get API key"** on the left, then **"Create API key in new project"**.
+    * Copy the key that's generated. **Keep this key private like a password.**
+
+---
+
+#### **Step 2: Add Your API Key to the Code**
+
+This is the most direct way to make the app work on any web host.
+
+1.  **Open `index.html`** in your text editor.
+2.  **Find the Placeholders:** Press `Ctrl + F` (or `Cmd + F` on Mac) and search for:
+    `"YOUR_GEMINI_API_KEY_HERE"`
+3.  **Replace Them:** You will find three instances of this placeholder. Carefully replace each one with the actual Gemini API key you copied from Google AI Studio.
+4.  **Save the file.**
+
+---
+
+#### **Step 3: Put Your Code on GitHub (Privately)**
+
+To keep your API key safe, your code's blueprint must be private.
+
+1.  **Create a New Repository:**
+    * Go to [GitHub.com](https://github.com) and log in.
+    * Click the `+` icon (top right) and choose **"New repository"**.
+    * Name it `ai-charger-live`.
+    * **CRITICAL:** Set the repository to **Private**. This is essential to protect your API key.
+    * Click **"Create repository"**.
+
+2.  **Upload Your File:**
+    * On the new repository page, click the **"Add file"** button and select **"Upload files"**.
+    * Drag your modified `index.html` file into the window.
+    * Click **"Commit changes"**.
+
+---
+
+#### **Step 4: Deploy on Vercel**
+
+This is the final step to bring your site to life.
+
+1.  **Connect to Vercel:**
+    * Go to [Vercel.com](https://vercel.com) and sign up using your GitHub account.
+    * From your Vercel dashboard, click **"Add New..."** and select **"Project"**.
+
+2.  **Import Your Project:**
+    * Vercel will ask for permission to access your GitHub repositories. Grant it access.
+    * Find your `ai-charger-live` repository and click the **"Import"** button.
+
+3.  **Deploy:**
+    * Vercel will know exactly what to do. You **do not** need to change any settings or add any environment variables.
+    * Simply click the **"Deploy"** button.
+
+Vercel will take about 30-60 seconds to build your site. It will then give you a public, shareable URL.
+
+**That's it!** You can now share that link with your team, and they will see the fully functional, live applicati
